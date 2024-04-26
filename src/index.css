@@ -1,3 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: GolosText-Regular;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(./assets/fonts/Golos_Text/static/GolosText-Regular.ttf);
+  }
+
+  @font-face {
+    font-family: GolosText-Bold;
+    font-style: bold;
+    font-weight: 700;
+    font-display: swap;
+    src: url(./assets/fonts/Golos_Text/static/GolosText-Bold.ttf);
+  }
+
+  @font-face {
+    font-family: GolosText-ExtraBold;
+    font-style: bold;
+    font-weight: 800;
+    font-display: swap;
+    src: url(./assets/fonts/Golos_Text/static/GolosText-ExtraBold.ttf);
+  }
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
