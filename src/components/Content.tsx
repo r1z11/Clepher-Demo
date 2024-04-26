@@ -38,7 +38,7 @@ function Content() {
     function convertTimestampToFullDate(timestamp: string) {
         // Create a new Date object with the timestamp
         const date = new Date(parseInt(timestamp));
-        console.log('date', date)
+        // console.log('date', date)
 
         // Get the full date components
         const year = date.getFullYear().toString();
