@@ -41,9 +41,9 @@ function Content() {
         console.log('date', date)
 
         // Get the full date components
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
-        const day = date.getDate().toString().padStart(2, '0');
+        const year = date.getFullYear().toString();
+        const month = (date.getMonth() + 1).toString(); // Months are zero-based
+        const day = date.getDate().toString();
 
         // Return the full date string
         return `${year}-${month}-${day}`;
@@ -69,7 +69,7 @@ function Content() {
                     ))}
                 </div>
             ) : (
-                <div className="font-golos-extra-bold mt-10 mx-auto">Loading...</div>
+                <div className="font-golos-extra-bold mt-10 mx-auto text-3xl">Loading...</div>
             )}
         </div>
     );
