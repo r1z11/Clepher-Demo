@@ -6,6 +6,7 @@ function Content() {
 
     const apiKey = process.env.REACT_APP_API_KEY;
 
+    // Fetch the data from the API
     useEffect(() => {
         const query = 'https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=AAPL&apikey=' + apiKey;
         console.log('fetching query', query);
@@ -18,7 +19,8 @@ function Content() {
                 }
                 console.log('response ok', response);
                 const jsonData = await response.json();
-                setData(jsonData);
+                // Set preset data feed if API limit is reached
+                jsonData?.feed ? setData(jsonData) : setData(sampleData);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -27,10 +29,12 @@ function Content() {
         fetchData();
     }, []);
 
+    // Debugging the data received
     useEffect(() => {
         console.log('data', data ? data : data);
     }, [data])
 
+    // Convert the timestamp to human readable format
     function convertTimestampToFullDate(timestamp: string) {
         // Create a new Date object with the timestamp
         const date = new Date(parseInt(timestamp));
@@ -65,7 +69,7 @@ function Content() {
                     ))}
                 </div>
             ) : (
-                <div className="font-golos-extra-bold mt-10">Loading...</div>
+                <div className="font-golos-extra-bold mt-10 mx-auto">Loading...</div>
             )}
         </div>
     );
