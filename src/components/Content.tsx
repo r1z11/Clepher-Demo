@@ -1,39 +1,30 @@
 import React, { useState, useEffect } from 'react';
+
 import { sampleData } from '../constants/Data';
+import { useGetNewsQuery } from '../services/AlphaVantage';
 
 function Content() {
-    const [data, setData] = useState<any>(null);
+    const [_data, setData] = useState<any>(null);
     const [msg, setMsg] = useState('');
 
-    const apiKey = process.env.REACT_APP_API_KEY;
+    const { data, error, isLoading } = useGetNewsQuery()
 
     // Fetch the data from the API
     useEffect(() => {
-        const query = 'https://www.alphavantage.co/query?function=NEWS_SENTIMENT&apikey=' + apiKey;
-        // console.log('fetching query', query);
+        console.log('data:', data);
 
-        const fetchData = async () => {
-            try {
-                const response = await fetch(query);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                // console.log('response ok', response);
-                const jsonData = await response.json();
-                // Set sample data feed if API limit is reached
-                if (jsonData?.feed) {
-                    setData(jsonData);
-                } else {
-                    setData(sampleData);
-                    setMsg('API limit reached. Using sample data');
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+        // Set sample data feed if API limit is reached
+        if (data?.feed) {
+            setData(data);
+        } else {
+            setData(sampleData);
+            setMsg('API limit reached. Using sample data');
+        }
+    }, [data]);
 
-        fetchData();
-    }, []);
+    useEffect(() => {
+        console.log('error:', error);
+    }, [error]);
 
     // Convert the timestamp to human readable format
     function convertTimestampToFullDate(timestamp: string) {
@@ -54,9 +45,11 @@ function Content() {
         <div className="justify-center max-w-3xl mx-auto pt-10">
             {msg.length > 0 ? <p className="font-golos-regular mt-20 text-xl mx-auto text-red-600">{msg}</p> : null}
 
-            {data?.feed ? (
+            {error ? <p className="font-golos-regular mt-20 text-xl mx-auto text-red-600">{String(error)}</p> : null}
+
+            {!isLoading ? (
                 <div className="mb-10 text-left px-10 pt-10">
-                    {data.feed.map((item: any, index: number) => (
+                    {_data?.feed.map((item: any, index: number) => (
                         <div key={index} className="mt-10">
                             <img src={item?.banner_image} className="flex-1 rounded-lg" />
 
