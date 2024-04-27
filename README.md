@@ -4,7 +4,7 @@ https://clepher.sparkwarelabs.com/
 https://r1z11.github.io/Clepher-Demo/
 
 # Screenshot
-![Screenshot](https://raw.githubusercontent.com/r1z11/clepher-Demo/main/screenshot.png)
+![Screenshot](https://github.com/r1z11/Clepher-Demo/tree/main/src/screenshot.png)
 
 # Getting Started with Create React App
 

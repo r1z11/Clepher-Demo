@@ -3,13 +3,14 @@ import { sampleData } from '../constants/Data';
 
 function Content() {
     const [data, setData] = useState<any>(null);
+    const [msg, setMsg] = useState('');
 
     const apiKey = process.env.REACT_APP_API_KEY;
 
     // Fetch the data from the API
     useEffect(() => {
-        const query = 'https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=AAPL&apikey=' + apiKey;
-        console.log('fetching query', query);
+        const query = 'https://www.alphavantage.co/query?function=NEWS_SENTIMENT&apikey=' + apiKey;
+        // console.log('fetching query', query);
 
         const fetchData = async () => {
             try {
@@ -17,10 +18,15 @@ function Content() {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                console.log('response ok', response);
+                // console.log('response ok', response);
                 const jsonData = await response.json();
-                // Set preset data feed if API limit is reached
-                jsonData?.feed ? setData(jsonData) : setData(sampleData);
+                // Set sample data feed if API limit is reached
+                if (jsonData?.feed) {
+                    setData(jsonData);
+                } else {
+                    setData(sampleData);
+                    setMsg('API limit reached. Using sample data');
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -28,11 +34,6 @@ function Content() {
 
         fetchData();
     }, []);
-
-    // Debugging the data received
-    useEffect(() => {
-        console.log('data', data ? data : data);
-    }, [data])
 
     // Convert the timestamp to human readable format
     function convertTimestampToFullDate(timestamp: string) {
@@ -50,26 +51,38 @@ function Content() {
     }
 
     return (
-        <div className="justify-center max-w-3xl mx-auto">
+        <div className="justify-center max-w-3xl mx-auto pt-10">
+            {msg.length > 0 ? <p className="font-golos-regular mt-20 text-xl mx-auto text-red-600">{msg}</p> : null}
+
             {data?.feed ? (
-                <div className="my-10 text-left px-10 pt-10">
+                <div className="mb-10 text-left px-10 pt-10">
                     {data.feed.map((item: any, index: number) => (
                         <div key={index} className="mt-10">
                             <img src={item?.banner_image} className="flex-1 rounded-lg" />
-                            <a href={item?.url} target="_blank" className="text-sky-800"><h2 className="font-golos-bold mt-3 text-3xl">{item?.title}</h2></a>
+
+                            <a href={item?.url} target="_blank" className="hover:text-amber-500"><h2 className="font-golos-bold mt-3 text-3xl">{item?.title}</h2></a>
+
                             <p className="font-golos-regular mt-3 text-l">{item?.summary}</p>
-                            <a href={item?.source_domain} target="_blank"><p className="font-golos-bold mt-3 text-xl text-sky-800">{item?.source}</p></a>
+
+                            <a href={item?.source_domain} target="_blank"><p className="font-golos-bold mt-3 text-xl hover:text-amber-500">{item?.source}</p></a>
+
                             <p className="font-golos-regular mt-3 text-l">Category: {item?.category_within_source}</p>
+
                             <p className="font-golos-regular mt-3 text-l">Date: {convertTimestampToFullDate(item?.time_published)}</p>
+
+                            <div className="font-golos-regular mt-3">Authors: {item?.authors.map((item: any, index: number) => (
+                                <span key={index} className="text-l m-2">{item}</span>
+                            ))}</div>
+
                             <div className="font-golos-regular mt-3">Topics: {item?.topics.map((item: any, index: number) => (
-                                <span key={index} className=" text-l bg-green-700 py-1 px-3 rounded-xl text-white mx-1 my-1">{item?.topic}</span>
+                                <span key={index} className="text-l bg-amber-500 py-1 px-3 rounded-xl text-black m-2">{item?.topic}</span>
                             ))}
                             </div>
                         </div>
                     ))}
                 </div>
             ) : (
-                <div className="font-golos-extra-bold mt-10 mx-auto text-3xl">Loading...</div>
+                <div className="font-golos-extra-bold mt-20 mx-auto text-3xl">Loading...</div>
             )}
         </div>
     );
