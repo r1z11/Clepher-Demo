@@ -2,29 +2,50 @@ import React, { useState, useEffect } from 'react';
 
 import { sampleData } from '../constants/Data';
 import { useGetNewsQuery } from '../services/AlphaVantage';
+import { useAppSelector } from '../hooks';
 
 function Content() {
-    const [_data, setData] = useState<any>(null);
+
+    const reduxData = useAppSelector(state => state.data.data)
+    const loading = useAppSelector(state => state.data.loading)
+
+    const [stateData, setData] = useState<any>(null);
     const [msg, setMsg] = useState('');
 
     const { data, error, isLoading } = useGetNewsQuery()
 
     // Fetch the data from the API
     useEffect(() => {
-        console.log('data:', data);
+        console.log('state data:', data);
 
         // Set sample data feed if API limit is reached
         if (data?.feed) {
             setData(data);
+            setMsg('');
         } else {
             setData(sampleData);
             setMsg('API limit reached. Using sample data');
         }
     }, [data]);
 
+    // Update the state data when redux data changes
+    useEffect(() => {
+        console.log('redux data:', reduxData);
+
+        // Set sample data feed if API limit is reached
+        if (reduxData?.feed) {
+            setData(reduxData);
+            setMsg('');
+        } else {
+            setData(sampleData);
+            setMsg('API limit reached. Using sample data');
+        }
+    }, [reduxData]);
+
+    // Log data fetch errors when they occur
     useEffect(() => {
         console.log('error:', error);
-    }, [error]);
+    }, [error, loading]);
 
     // Convert the timestamp to human readable format
     function convertTimestampToFullDate(timestamp: string) {
@@ -47,9 +68,9 @@ function Content() {
 
             {error ? <p className="font-golos-regular mt-20 text-xl mx-auto text-red-600">{String(error)}</p> : null}
 
-            {!isLoading ? (
+            {!isLoading || !loading ? (
                 <div className="mb-10 text-left px-10 pt-10">
-                    {_data?.feed.map((item: any, index: number) => (
+                    {stateData?.feed.map((item: any, index: number) => (
                         <div key={index} className="mt-10">
                             <img src={item?.banner_image} className="flex-1 rounded-lg" />
 
